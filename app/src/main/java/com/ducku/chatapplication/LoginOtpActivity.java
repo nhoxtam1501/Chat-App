@@ -2,6 +2,7 @@ package com.ducku.chatapplication;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -18,8 +19,12 @@ import com.ducku.chatapplication.utils.AppUtils;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseException;
+import com.google.firebase.FirebaseTooManyRequestsException;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
+import com.google.firebase.auth.FirebaseAuthMissingActivityForRecaptchaException;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.PhoneAuthOptions;
 import com.google.firebase.auth.PhoneAuthProvider;
@@ -55,6 +60,8 @@ public class LoginOtpActivity extends AppCompatActivity {
         resendOtp = loginOtpBinding.resendOtpTextview;
         loginProgressBar = loginOtpBinding.loginProgressBar;
 
+        auth.getFirebaseAuthSettings().forceRecaptchaFlowForTesting(true);
+
         phone = Objects.requireNonNull(getIntent().getExtras()).getString("phone");
         sendOtp(phone, false);
 
@@ -86,14 +93,29 @@ public class LoginOtpActivity extends AppCompatActivity {
                 .setCallbacks(new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
                     @Override
                     public void onVerificationCompleted(@NonNull PhoneAuthCredential phoneAuthCredential) {
+                        // This callback will be invoked in two situations:
+                        // 1 - Instant verification. In some cases the phone number can be instantly
+                        //     verified without needing to send or enter a verification code.
+                        // 2 - Auto-retrieval. On some devices Google Play services can automatically
+                        //     detect the incoming verification SMS and perform verification without
+                        //     user action.
                         signIn(phoneAuthCredential);
                         setInProgress(false);
                     }
 
                     @Override
                     public void onVerificationFailed(@NonNull FirebaseException e) {
-                        AppUtils.showToast(getApplicationContext(), "OTP verification failed.");
                         setInProgress(false);
+                        if (e instanceof FirebaseAuthInvalidCredentialsException) {
+                            // Invalid request
+                            AppUtils.showToast(getApplicationContext(), "Invalid request");
+                        } else if (e instanceof FirebaseTooManyRequestsException) {
+                            // The SMS quota for the project has been exceeded
+                            AppUtils.showToast(getApplicationContext(), "The SMS quota for the project has been exceeded");
+                        } else if (e instanceof FirebaseAuthMissingActivityForRecaptchaException) {
+                            // reCAPTCHA verification attempted with null Activity
+                            AppUtils.showToast(getApplicationContext(), "reCAPTCHA verification attempted with null Activity");
+                        }
                     }
 
                     @Override
@@ -117,6 +139,8 @@ public class LoginOtpActivity extends AppCompatActivity {
         auth.signInWithCredential(phoneAuthCredential).addOnCompleteListener(task -> {
             setInProgress(false);
             if (task.isSuccessful()) {
+                FirebaseUser user = task.getResult().getUser();
+                Log.d("Firebase User: ", user.getPhoneNumber());
                 Intent intent = new Intent(getApplicationContext(), LoginUsernameActivity.class);
                 intent.putExtra("phone", phone);
                 startActivity(intent);
@@ -142,6 +166,7 @@ public class LoginOtpActivity extends AppCompatActivity {
         Timer timer = new Timer();
         timer.scheduleAtFixedRate(new TimerTask() {
             Long remainTime = TIME_OUT_SECONDS;
+
             @Override
             public void run() {
                 remainTime--;
