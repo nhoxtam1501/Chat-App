@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "669897627923",
+    "project_id": "sgu-chat-application",
+    "storage_bucket": "sgu-chat-application.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:669897627923:android:6cb9b4ab2cae7edb98e2e6",
+        "android_client_info": {
+          "package_name": "com.ducku.chatapplication"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCpjJXtQegnxmlotloF9P6kYT-7JK2pto0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
