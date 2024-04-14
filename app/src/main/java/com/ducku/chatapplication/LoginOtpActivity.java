@@ -2,6 +2,7 @@ package com.ducku.chatapplication;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.telephony.SmsManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -60,7 +61,9 @@ public class LoginOtpActivity extends AppCompatActivity {
         resendOtp = loginOtpBinding.resendOtpTextview;
         loginProgressBar = loginOtpBinding.loginProgressBar;
 
-        auth.getFirebaseAuthSettings().forceRecaptchaFlowForTesting(true);
+        auth.getFirebaseAuthSettings();//.forceRecaptchaFlowForTesting(true);
+
+
 
         phone = Objects.requireNonNull(getIntent().getExtras()).getString("phone");
         sendOtp(phone, false);
@@ -121,10 +124,13 @@ public class LoginOtpActivity extends AppCompatActivity {
                     @Override
                     public void onCodeSent(@NonNull String s, @NonNull PhoneAuthProvider.ForceResendingToken forceResendingToken) {
                         super.onCodeSent(s, forceResendingToken);
+
                         verificationCode = s;
                         resendingToken = forceResendingToken;
                         AppUtils.showToast(getApplicationContext(), "OTP sent successfully");
                         setInProgress(false);
+
+
                     }
                 });
         if (isResend) {

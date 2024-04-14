@@ -11,6 +11,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.ducku.chatapplication.databinding.ActivitySplashBinding;
+import com.ducku.chatapplication.utils.FirebaseUtils;
 
 public class SplashActivity extends AppCompatActivity {
     ActivitySplashBinding splashBinding;
@@ -22,8 +23,12 @@ public class SplashActivity extends AppCompatActivity {
         setContentView(splashBinding.getRoot());
 
         new Handler().postDelayed(() -> {
-            startActivity(new Intent(SplashActivity.this, LoginPhoneNumberActivity.class));
+            if (FirebaseUtils.isLoggedIn()) {
+                startActivity(new Intent(SplashActivity.this, MainActivity.class));
+            } else {
+                startActivity(new Intent(SplashActivity.this, LoginPhoneNumberActivity.class));
+            }
             finish();
-        }, 2000);
+        }, 1500);
     }
 }
