@@ -61,7 +61,7 @@ public class LoginOtpActivity extends AppCompatActivity {
         resendOtp = loginOtpBinding.resendOtpTextview;
         loginProgressBar = loginOtpBinding.loginProgressBar;
 
-        auth.getFirebaseAuthSettings();//.forceRecaptchaFlowForTesting(true);
+        auth.getFirebaseAuthSettings().forceRecaptchaFlowForTesting(true);
 
 
 
@@ -146,7 +146,7 @@ public class LoginOtpActivity extends AppCompatActivity {
             setInProgress(false);
             if (task.isSuccessful()) {
                 FirebaseUser user = task.getResult().getUser();
-                Log.d("Firebase User: ", user.getPhoneNumber());
+                //Log.d("Firebase User: ", user.getPhoneNumber());
                 Intent intent = new Intent(getApplicationContext(), LoginUsernameActivity.class);
                 intent.putExtra("phone", phone);
                 startActivity(intent);

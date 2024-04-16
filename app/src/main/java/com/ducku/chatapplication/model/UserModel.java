@@ -7,11 +7,14 @@ public class UserModel {
     private String username;
     private Timestamp createdTimeStamp;
 
+    private String userId;
 
-    public UserModel(String phone, String username, Timestamp createdTimeStamp) {
+
+    public UserModel(String phone, String username, Timestamp createdTimeStamp, String userId) {
         this.phone = phone;
         this.username = username;
         this.createdTimeStamp = createdTimeStamp;
+        this.userId = userId;
     }
 
     public UserModel() {
@@ -39,5 +42,13 @@ public class UserModel {
 
     public void setCreatedTimeStamp(Timestamp createdTimeStamp) {
         this.createdTimeStamp = createdTimeStamp;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 }
