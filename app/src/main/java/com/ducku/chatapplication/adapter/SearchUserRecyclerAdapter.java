@@ -1,6 +1,7 @@
 package com.ducku.chatapplication.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,8 +12,10 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.ducku.chatapplication.ChatActivity;
 import com.ducku.chatapplication.R;
 import com.ducku.chatapplication.model.UserModel;
+import com.ducku.chatapplication.utils.AppUtils;
 import com.ducku.chatapplication.utils.FirebaseUtils;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
@@ -35,6 +38,10 @@ public class SearchUserRecyclerAdapter extends FirestoreRecyclerAdapter<UserMode
         }
         searchUserRecyclerViewHolder.itemView.setOnClickListener(v -> {
             //navigate to chat activity
+            Intent intent = new Intent(context, ChatActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            AppUtils.passUserModelAsIntent(intent, userModel);
+            context.startActivity(intent);
         });
     }
 
